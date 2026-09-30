@@ -6,6 +6,7 @@
   "scripts": {
     "test": "playwright test",
     "test:ci": "CI=true playwright test --repeat-each=5 --workers=4 --reporter=line",
+    "test:ci:chromium": "CI=true playwright test --project=chromium --repeat-each=5 --workers=4 --reporter=line",
     "test:headed": "playwright test --headed",
     "test:chromium": "playwright test --project=chromium",
     "test:firefox": "playwright test --project=firefox",

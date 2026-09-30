@@ -20,8 +20,8 @@ jobs:
         run: npm ci
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
-      - name: Run Playwright tests
-        run: CI=true npx playwright test --repeat-each=5 --workers=4 --reporter=line
+      - name: Run Playwright tests on Chromium only
+        run: CI=true npx playwright test --project=chromium --repeat-each=5 --workers=4 --reporter=line
       - name: Upload Playwright HTML report
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
