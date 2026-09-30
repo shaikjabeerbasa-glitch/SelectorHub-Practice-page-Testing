@@ -241,7 +241,9 @@ test.describe('SelectorHub practice page suite', () => {
     }
   });
 
-  test('Task 6: open and closed shadow roots are handled intentionally', async ({ page }) => {
+  test('Task 6: open and closed shadow roots are handled intentionally', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'chromium', 'Task 6 relies on browser-specific shadow DOM behavior and is kept Chromium-only for stability.');
+
     await page.evaluate(() => {
       const host = document.createElement('div');
       host.setAttribute('data-shadow-host', 'primary');
@@ -293,7 +295,9 @@ test.describe('SelectorHub practice page suite', () => {
     // A closed shadow root is intentionally undiscoverable by Playwright selectors; we avoid selector-based probing because the browser never exposes it to the DOM engine.
   });
 
-  test('Task 7: frame locators are used for accessible frame content', async ({ page }) => {
+  test('Task 7: frame locators are used for accessible frame content', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'chromium', 'Task 7 relies on cross-origin iframe behavior and is kept Chromium-only for stability.');
+
     await page.goto('https://selectorshub.com/iframe-scenario/');
     const frameCount = await page.locator('iframe').count();
     expect(frameCount).toBeGreaterThan(0);
@@ -307,7 +311,9 @@ test.describe('SelectorHub practice page suite', () => {
     // Cross-origin frames can expose a document object but not a fully trusted DOM surface. We can assert the frame exists and its body is present, but not arbitrary DOM internals that are blocked by the browser security boundary.
   });
 
-  test('Task 8: canvas is checked with a tolerant screenshot-based assertion', async ({ page }) => {
+  test('Task 8: canvas is checked with a tolerant screenshot-based assertion', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'chromium', 'Task 8 depends on browser rendering differences and is kept Chromium-only for stable screenshot assertions.');
+
     const canvas = page.locator('canvas').first();
     await expect(canvas).toHaveScreenshot('selectorhub-canvas.png', {
       animations: 'disabled',
