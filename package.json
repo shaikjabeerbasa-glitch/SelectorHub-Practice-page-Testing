@@ -5,14 +5,15 @@
   "main": "index.js",
   "scripts": {
     "test": "playwright test",
+    "test:ci": "CI=true playwright test --repeat-each=5 --workers=4 --reporter=line",
     "test:headed": "playwright test --headed",
     "test:chromium": "playwright test --project=chromium",
     "test:firefox": "playwright test --project=firefox",
     "test:webkit": "playwright test --project=webkit",
     "test:repeat": "playwright test --repeat-each=5 --workers=4",
     "test:report": "playwright show-report",
-    "lint": "eslint . --ext .ts",
-    "lint:fix": "eslint . --ext .ts --fix"
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "keywords": [
     "playwright",
