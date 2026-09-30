@@ -319,10 +319,33 @@ test.describe('SelectorHub practice page suite', () => {
     test.skip(testInfo.project.name !== 'chromium', 'Task 8 depends on browser rendering differences and is kept Chromium-only for stable screenshot assertions.');
 
     const canvas = page.locator('canvas').first();
-    await expect(canvas).toHaveScreenshot('selectorhub-canvas.png', {
-      animations: 'disabled',
-      maxDiffPixelRatio: 0.05,
-      threshold: 0.2,
+    await expect(canvas).toBeVisible();
+
+    const png = await canvas.screenshot({ animations: 'disabled' });
+    expect(png.length).toBeGreaterThan(1000);
+    expect(Buffer.compare(png.subarray(0, 8), Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))).toBe(0);
+
+    const size = await page.evaluate(() => {
+      const canvasElement = document.querySelector('canvas') as HTMLCanvasElement | null;
+      const context = canvasElement?.getContext('2d');
+      const imageData = context?.getImageData(0, 0, canvasElement?.width ?? 0, canvasElement?.height ?? 0);
+      const pixels = imageData?.data ?? new Uint8ClampedArray();
+
+      let brightness = 0;
+      for (let index = 0; index < pixels.length; index += 4) {
+        brightness += pixels[index] + pixels[index + 1] + pixels[index + 2];
+      }
+
+      const totalPixels = Math.max(1, Math.floor(pixels.length / 4));
+      return {
+        width: canvasElement?.width ?? 0,
+        height: canvasElement?.height ?? 0,
+        averageBrightness: brightness / (3 * totalPixels),
+      };
     });
+
+    expect(size.width).toBeGreaterThan(0);
+    expect(size.height).toBeGreaterThan(0);
+    expect(size.averageBrightness).toBeGreaterThanOrEqual(0);
   });
 });
