@@ -24,19 +24,6 @@ export const test = base.extend<{ selectorHubPage: SelectorHubPage }>({
       await route.continue();
     });
 
-    await page.addLocatorHandler(
-      page.getByText(/Ends in|Claim It Here|Close Products|Open Products|Close Pricing|Open Pricing/i).first(),
-      async (locator) => {
-        await locator.evaluate((element) => {
-          const target = element as HTMLElement;
-          target.style.display = 'none';
-          target.style.visibility = 'hidden';
-          target.setAttribute('aria-hidden', 'true');
-        });
-        await locator.waitFor({ state: 'hidden' });
-      },
-    );
-
     const selectorHubPage = new SelectorHubPage(page);
     await use(selectorHubPage);
   },

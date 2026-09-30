@@ -85,8 +85,6 @@ test.describe('SelectorHub practice page suite', () => {
   });
 
   test('Task 1: spinner appears then disappears without sleeping', async ({ page }) => {
-    const spinner = page.locator('[data-spinner="assignment-loader"]');
-
     await page.evaluate(() => {
       const div = document.createElement('div');
       div.setAttribute('data-spinner', 'assignment-loader');
@@ -102,8 +100,14 @@ test.describe('SelectorHub practice page suite', () => {
       window.setTimeout(() => div.remove(), 1200);
     });
 
-    await expect(spinner).toBeVisible();
-    await expect(spinner).toBeHidden({ timeout: 15000 });
+    await expect.poll(async () => {
+      return await page.evaluate(() => {
+        const el = document.querySelector('[data-spinner="assignment-loader"]') as HTMLElement | null;
+        return !!el && getComputedStyle(el).display !== 'none' && getComputedStyle(el).visibility !== 'hidden';
+      });
+    }).toBeTruthy();
+
+    await page.waitForFunction(() => !document.querySelector('[data-spinner="assignment-loader"]'), { timeout: 15000 });
   });
 
   test('Task 2: large table is aggregated and user table selection is by username', async ({ selectorHubPage }) => {
