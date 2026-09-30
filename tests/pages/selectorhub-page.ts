@@ -39,10 +39,25 @@ export class SelectorHubPage {
   }
 
   async goto() {
-    await this.page.goto('https://selectorshub.com/xpath-practice-page/', {
-      waitUntil: 'load',
+    const options = {
+      waitUntil: 'domcontentloaded' as const,
       timeout: 120000,
-    });
+    };
+
+    let lastError: unknown;
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+      try {
+        await this.page.goto('https://selectorshub.com/xpath-practice-page/', options);
+        return;
+      } catch (error) {
+        lastError = error;
+        if (attempt === 2) {
+          break;
+        }
+      }
+    }
+
+    throw lastError;
   }
 
   async extractTableRows(): Promise<TableRow[]> {
